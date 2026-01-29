@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Architecture Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Work+Sans:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --black: #0f0f0f;
+        --white: #fafafa;
+        --grey: #888888;
+        --light-grey: #e5e5e5;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Work Sans", sans-serif;
+        background: var(--white);
+        color: var(--black);
+        overflow-x: hidden;
+      }
+
+      /* Cursor */
+      .custom-cursor {
+        width: 12px;
+        height: 12px;
+        background: var(--black);
+        border-radius: 50%;
+        position: fixed;
+        pointer-events: none;
+        z-index: 9999;
+        mix-blend-mode: difference;
+        transition: transform 0.2s ease;
+      }
+
+      /* Navigation */
+      nav {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        padding: 3rem 5%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 100;
+        background: linear-gradient(
+          180deg,
+          var(--white) 0%,
+          rgba(250, 250, 250, 0) 100%
+        );
+      }
+
+      .logo {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 2rem;
+        letter-spacing: 0.1em;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 4rem;
+        list-style: none;
+      }
+
+      .nav-links a {
+        color: var(--black);
+        text-decoration: none;
+        font-size: 0.95rem;
+        font-weight: 400;
+        letter-spacing: 0.05em;
+        transition: opacity 0.3s ease;
+      }
+
+      .nav-links a:hover {
+        opacity: 0.5;
+      }
+
+      /* Hero */
+      .hero {
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        padding: 0 5%;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero-bg {
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 60%;
+        height: 100%;
+        background: var(--black);
+        z-index: 0;
+      }
+
+      .hero-content {
+        position: relative;
+        z-index: 10;
+        max-width: 1400px;
+        margin: 0 auto;
+        width: 100%;
+      }
+
+      .hero-title {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: clamp(4rem, 12vw, 11rem);
+        line-height: 0.9;
+        letter-spacing: 0.02em;
+        margin-bottom: 2rem;
+      }
+
+      .hero-subtitle {
+        font-size: 1.1rem;
+        font-weight: 300;
+        max-width: 500px;
+        color: var(--grey);
+        letter-spacing: 0.03em;
+        line-height: 2;
+        margin-top: 3rem;
+      }
+
+      .hero-year {
+        position: absolute;
+        right: 3rem;
+        bottom: 3rem;
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 8rem;
+        color: var(--white);
+        opacity: 0.1;
+      }
+
+      /* Grid Section */
+      .grid-section {
+        padding: 12rem 5%;
+        background: var(--white);
+      }
+
+      .section-title {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 5rem;
+        margin-bottom: 2rem;
+        letter-spacing: 0.05em;
+      }
+
+      .section-subtitle {
+        font-size: 1.2rem;
+        color: var(--grey);
+        margin-bottom: 8rem;
+        font-weight: 300;
+      }
+
+      .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 4rem;
+        max-width: 1600px;
+        margin: 0 auto;
+      }
+
+      .project-item {
+        aspect-ratio: 4/3;
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+      }
+
+      .project-image {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, var(--black) 0%, #2a2a2a 100%);
+        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 5rem;
+      }
+
+      .project-item:hover .project-image {
+        transform: scale(1.05);
+      }
+
+      .project-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 3rem;
+        background: linear-gradient(
+          0deg,
+          rgba(0, 0, 0, 0.8) 0%,
+          transparent 100%
+        );
+        color: var(--white);
+        transform: translateY(100%);
+        transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .project-item:hover .project-overlay {
+        transform: translateY(0);
+      }
+
+      .project-number {
+        font-size: 0.85rem;
+        letter-spacing: 0.3em;
+        opacity: 0.6;
+        margin-bottom: 1rem;
+      }
+
+      .project-title {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 2.5rem;
+        letter-spacing: 0.05em;
+        margin-bottom: 1rem;
+      }
+
+      .project-category {
+        font-size: 0.95rem;
+        font-weight: 300;
+        opacity: 0.8;
+      }
+
+      /* Full Width Section */
+      .full-width-section {
+        padding: 15rem 5%;
+        background: var(--black);
+        color: var(--white);
+        text-align: center;
+      }
+
+      .fw-title {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: clamp(3rem, 8vw, 8rem);
+        letter-spacing: 0.05em;
+        margin-bottom: 4rem;
+      }
+
+      .fw-text {
+        font-size: 1.3rem;
+        font-weight: 300;
+        max-width: 800px;
+        margin: 0 auto;
+        line-height: 2.2;
+        color: var(--light-grey);
+      }
+
+      /* Large Grid */
+      .large-grid {
+        padding: 10rem 5%;
+        max-width: 1800px;
+        margin: 0 auto;
+      }
+
+      .large-grid-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 5rem;
+      }
+
+      .grid-card {
+        opacity: 0;
+        transform: translateY(50px);
+        transition: all 0.5s ease;
+      }
+
+      .grid-card.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .card-image {
+        width: 100%;
+        aspect-ratio: 3/4;
+        background: linear-gradient(135deg, #1a1a1a 0%, #3a3a3a 100%);
+        margin-bottom: 2.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4rem;
+        transition: transform 0.4s ease;
+      }
+
+      .grid-card:hover .card-image {
+        transform: scale(0.97);
+      }
+
+      .card-info {
+        padding: 0 0.5rem;
+      }
+
+      .card-category {
+        font-size: 0.85rem;
+        color: var(--grey);
+        margin-bottom: 1rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .card-title {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 2rem;
+        letter-spacing: 0.05em;
+        margin-bottom: 1rem;
+      }
+
+      .card-description {
+        font-size: 0.95rem;
+        color: var(--grey);
+        line-height: 1.8;
+        font-weight: 300;
+      }
+
+      /* Stats */
+      .stats-section {
+        padding: 12rem 5%;
+        background: var(--light-grey);
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6rem;
+        max-width: 1400px;
+        margin: 0 auto;
+        text-align: center;
+      }
+
+      .stat-number {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 6rem;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.5rem;
+      }
+
+      .stat-label {
+        font-size: 0.95rem;
+        color: var(--grey);
+        font-weight: 300;
+        letter-spacing: 0.05em;
+      }
+
+      /* Footer */
+      footer {
+        background: var(--black);
+        color: var(--white);
+        padding: 8rem 5% 4rem;
+      }
+
+      .footer-content {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 6rem;
+        margin-bottom: 6rem;
+      }
+
+      .footer-brand {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 3rem;
+        letter-spacing: 0.1em;
+        margin-bottom: 1rem;
+      }
+
+      .footer-tagline {
+        color: var(--grey);
+        font-weight: 300;
+        line-height: 2;
+      }
+
+      .footer-section h4 {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 1.5rem;
+        letter-spacing: 0.1em;
+        margin-bottom: 1.5rem;
+      }
+
+      .footer-links {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      .footer-links a {
+        color: var(--grey);
+        text-decoration: none;
+        font-size: 0.95rem;
+        font-weight: 300;
+        transition: color 0.3s ease;
+      }
+
+      .footer-links a:hover {
+        color: var(--white);
+      }
+
+      .footer-bottom {
+        border-top: 1px solid #333;
+        padding-top: 3rem;
+        text-align: center;
+        color: var(--grey);
+        font-size: 0.9rem;
+      }
+
+      /* Modal */
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+      }
+
+      .modal.active {
+        display: flex;
+      }
+
+      .modal-content {
+        background: var(--white);
+        max-width: 1200px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        position: relative;
+        animation: modalSlide 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      @keyframes modalSlide {
+        from {
+          opacity: 0;
+          transform: translateY(100px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .modal-close {
+        position: fixed;
+        top: 2rem;
+        right: 2rem;
+        width: 50px;
+        height: 50px;
+        background: var(--white);
+        border: none;
+        cursor: pointer;
+        font-size: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1001;
+        transition: transform 0.3s ease;
+      }
+
+      .modal-close:hover {
+        transform: rotate(90deg);
+      }
+
+      .modal-hero {
+        width: 100%;
+        height: 60vh;
+        background: linear-gradient(135deg, var(--black) 0%, #2a2a2a 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10rem;
+      }
+
+      .modal-body {
+        padding: 4rem;
+      }
+
+      .modal-meta {
+        display: flex;
+        gap: 3rem;
+        margin-bottom: 2rem;
+        font-size: 0.9rem;
+        color: var(--grey);
+      }
+
+      .modal-title {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 4rem;
+        letter-spacing: 0.05em;
+        margin-bottom: 1rem;
+      }
+
+      .modal-subtitle {
+        font-size: 1.2rem;
+        color: var(--grey);
+        margin-bottom: 3rem;
+        font-weight: 300;
+      }
+
+      .modal-description {
+        font-size: 1.05rem;
+        line-height: 1.9;
+        color: var(--grey);
+        margin-bottom: 3rem;
+        font-weight: 300;
+      }
+
+      .modal-specs {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+        padding-top: 3rem;
+        border-top: 1px solid var(--light-grey);
+      }
+
+      .spec-item h5 {
+        font-size: 0.85rem;
+        color: var(--grey);
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+
+      .spec-item p {
+        font-size: 1.1rem;
+        font-weight: 400;
+      }
+
+      /* Responsive */
+      @media (max-width: 1024px) {
+        .hero-title {
+          font-size: 6rem;
+        }
+
+        .projects-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .large-grid-container {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 2rem;
+        }
+
+        .stats-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .footer-content {
+          grid-template-columns: 1fr;
+          gap: 3rem;
+        }
+      }
+
+      @media (max-width: 768px) {
+        nav {
+          padding: 1.5rem;
+        }
+
+        .nav-links {
+          gap: 1.5rem;
+        }
+
+        .hero {
+          padding: 0 1.5rem;
+        }
+
+        .hero-bg {
+          width: 100%;
+        }
+
+        .hero-title {
+          font-size: 4rem;
+        }
+
+        .grid-section {
+          padding: 5rem 1.5rem;
+        }
+
+        .section-title {
+          font-size: 3rem;
+        }
+
+        .large-grid {
+          padding: 3rem 1.5rem;
+        }
+
+        .large-grid-container {
+          grid-template-columns: 1fr;
+        }
+
+        .modal-body {
+          padding: 2rem;
+        }
+
+        .modal-specs {
+          grid-template-columns: 1fr;
+        }
+
+        .custom-cursor {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Custom Cursor -->
+    <div class="custom-cursor"></div>
+
+    <!-- Navigation -->
+    <nav>
+      <div class="logo">STUDIO</div>
+      <ul class="nav-links">
+        <li><a href="#work">WORK</a></li>
+        <li><a href="#about">ABOUT</a></li>
+        <li><a href="#contact">CONTACT</a></li>
+      </ul>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-content">
+        <h1 class="hero-title">ARCHITECTURE<br />& DESIGN</h1>
+        <p class="hero-subtitle">
+          Creating spaces that inspire, innovate, and transform the way we live
+          and work.
+        </p>
+      </div>
+      <div class="hero-year">2026</div>
+    </section>
+
+    <!-- Projects Grid -->
+    <section class="grid-section" id="work">
+      <h2 class="section-title">SELECTED WORKS</h2>
+      <p class="section-subtitle">Explore our latest architectural projects</p>
+
+      <div class="projects-grid">
+        <div class="project-item" onclick="openModal(0)">
+          <div class="project-image">🏢</div>
+          <div class="project-overlay">
+            <div class="project-number">01</div>
+            <h3 class="project-title">MODERN RESIDENCE</h3>
+            <p class="project-category">Residential / Seoul</p>
+          </div>
+        </div>
+
+        <div class="project-item" onclick="openModal(1)">
+          <div class="project-image">📚</div>
+          <div class="project-overlay">
+            <div class="project-number">02</div>
+            <h3 class="project-title">COMMUNITY LIBRARY</h3>
+            <p class="project-category">Cultural / Busan</p>
+          </div>
+        </div>
+
+        <div class="project-item" onclick="openModal(2)">
+          <div class="project-image">🏛️</div>
+          <div class="project-overlay">
+            <div class="project-number">03</div>
+            <h3 class="project-title">MIXED-USE COMPLEX</h3>
+            <p class="project-category">Commercial / Incheon</p>
+          </div>
+        </div>
+
+        <div class="project-item" onclick="openModal(3)">
+          <div class="project-image">🎨</div>
+          <div class="project-overlay">
+            <div class="project-number">04</div>
+            <h3 class="project-title">ART MUSEUM</h3>
+            <p class="project-category">Public / Gwangju</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Full Width -->
+    <section class="full-width-section">
+      <h2 class="fw-title">DESIGN PHILOSOPHY</h2>
+      <p class="fw-text">
+        We believe in creating timeless architecture that seamlessly blends form
+        and function, respecting the environment while pushing the boundaries of
+        innovation and creativity.
+      </p>
+    </section>
+
+    <!-- Large Grid -->
+    <section class="large-grid">
+      <div class="large-grid-container">
+        <div class="grid-card">
+          <div class="card-image">🏠</div>
+          <div class="card-info">
+            <div class="card-category">Renovation</div>
+            <h3 class="card-title">HANOK REINTERPRETATION</h3>
+            <p class="card-description">
+              Traditional Korean architecture meets contemporary design
+            </p>
+          </div>
+        </div>
+
+        <div class="grid-card">
+          <div class="card-image">🌳</div>
+          <div class="card-info">
+            <div class="card-category">Installation</div>
+            <h3 class="card-title">PAVILION</h3>
+            <p class="card-description">
+              Exploring the boundary between nature and structure
+            </p>
+          </div>
+        </div>
+
+        <div class="grid-card">
+          <div class="card-image">🏗️</div>
+          <div class="card-info">
+            <div class="card-category">Concept</div>
+            <h3 class="card-title">URBAN TOWER</h3>
+            <p class="card-description">
+              Vertical living redefined for modern cities
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats -->
+    <section class="stats-section" id="about">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number">25+</div>
+          <div class="stat-label">PROJECTS</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">8</div>
+          <div class="stat-label">AWARDS</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">15K</div>
+          <div class="stat-label">SQ METERS</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">100%</div>
+          <div class="stat-label">PASSION</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact">
+      <div class="footer-content">
+        <div>
+          <div class="footer-brand">STUDIO</div>
+          <p class="footer-tagline">
+            Designing the future of architecture,<br />
+            one project at a time.
+          </p>
+        </div>
+        <div class="footer-section">
+          <h4>CONNECT</h4>
+          <ul class="footer-links">
+            <li><a href="#">Instagram</a></li>
+            <li><a href="#">Behance</a></li>
+            <li><a href="#">LinkedIn</a></li>
+            <li><a href="#">Pinterest</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>CONTACT</h4>
+          <ul class="footer-links">
+            <li><a href="mailto:hello@studio.com">hello@studio.com</a></li>
+            <li><a href="tel:+82-10-1234-5678">+82 10 1234 5678</a></li>
+            <li><a href="#">Seoul, Korea</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 STUDIO. ALL RIGHTS RESERVED.</p>
+      </div>
+    </footer>
+
+    <!-- Modal -->
+    <div class="modal" id="modal" onclick="closeModal(event)">
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-hero" id="modalImage"></div>
+        <div class="modal-body">
+          <div class="modal-meta">
+            <span id="modalCategory"></span>
+            <span id="modalLocation"></span>
+            <span id="modalYear"></span>
+          </div>
+          <h2 class="modal-title" id="modalTitle"></h2>
+          <p class="modal-subtitle" id="modalSubtitle"></p>
+          <p class="modal-description" id="modalDescription"></p>
+          <div class="modal-specs">
+            <div class="spec-item">
+              <h5>Area</h5>
+              <p id="modalArea"></p>
+            </div>
+            <div class="spec-item">
+              <h5>Duration</h5>
+              <p id="modalDuration"></p>
+            </div>
+            <div class="spec-item">
+              <h5>Software</h5>
+              <p id="modalSoftware"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Custom Cursor
+      const cursor = document.querySelector(".custom-cursor");
+      document.addEventListener("mousemove", (e) => {
+        cursor.style.left = e.clientX + "px";
+        cursor.style.top = e.clientY + "px";
+      });
+
+      // Intersection Observer
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+            }
+          });
+        },
+        { threshold: 0.1 }
+      );
+
+      document.querySelectorAll(".grid-card").forEach((card) => {
+        observer.observe(card);
+      });
+
+      // Projects Data
+      const projects = [
+        {
+          icon: "🏢",
+          title: "MODERN RESIDENCE",
+          subtitle: "Luxury residential design",
+          category: "Residential",
+          location: "Seoul",
+          year: "2024",
+          description:
+            "A contemporary residential project featuring open-plan living spaces with floor-to-ceiling windows that maximize natural light. The design emphasizes the connection between indoor and outdoor spaces, creating a seamless flow throughout the home.",
+          area: "250 sqm",
+          duration: "6 months",
+          software: "AutoCAD, SketchUp, V-Ray",
+        },
+        {
+          icon: "📚",
+          title: "COMMUNITY LIBRARY",
+          subtitle: "Public cultural space",
+          category: "Cultural",
+          location: "Busan",
+          year: "2024",
+          description:
+            "A multi-functional cultural space designed for community engagement. The flexible layout accommodates various activities, while sustainable materials and natural lighting create an inspiring environment for learning and gathering.",
+          area: "1,200 sqm",
+          duration: "8 months",
+          software: "Revit, Lumion, Photoshop",
+        },
+        {
+          icon: "🏛️",
+          title: "MIXED-USE COMPLEX",
+          subtitle: "Commercial and retail",
+          category: "Commercial",
+          location: "Incheon",
+          year: "2023",
+          description:
+            "A dynamic commercial complex where shopping, culture, and leisure converge. The design features efficient circulation and a striking facade that creates a strong urban presence, with a central atrium connecting all levels.",
+          area: "8,000 sqm",
+          duration: "12 months",
+          software: "Revit, 3ds Max, V-Ray",
+        },
+        {
+          icon: "🎨",
+          title: "ART MUSEUM",
+          subtitle: "Contemporary art space",
+          category: "Public",
+          location: "Gwangju",
+          year: "2023",
+          description:
+            "An organic architectural form that celebrates the intersection of art and nature. The museum features naturally lit exhibition spaces and thoughtful integration with the surrounding landscape, creating a contemplative environment for art appreciation.",
+          area: "2,500 sqm",
+          duration: "10 months",
+          software: "Rhino, Grasshopper, V-Ray",
+        },
+      ];
+
+      // Modal Functions
+      function openModal(index) {
+        const project = projects[index];
+        document.getElementById("modalImage").textContent = project.icon;
+        document.getElementById("modalCategory").textContent = project.category;
+        document.getElementById("modalLocation").textContent = project.location;
+        document.getElementById("modalYear").textContent = project.year;
+        document.getElementById("modalTitle").textContent = project.title;
+        document.getElementById("modalSubtitle").textContent = project.subtitle;
+        document.getElementById("modalDescription").textContent =
+          project.description;
+        document.getElementById("modalArea").textContent = project.area;
+        document.getElementById("modalDuration").textContent = project.duration;
+        document.getElementById("modalSoftware").textContent = project.software;
+
+        document.getElementById("modal").classList.add("active");
+        document.body.style.overflow = "hidden";
+      }
+
+      function closeModal(event) {
+        if (!event || event.target.id === "modal") {
+          document.getElementById("modal").classList.remove("active");
+          document.body.style.overflow = "auto";
+        }
+      }
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeModal();
+      });
+
+      // Smooth Scroll
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute("href"));
+          if (target) {
+            target.scrollIntoView({ behavior: "smooth" });
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
